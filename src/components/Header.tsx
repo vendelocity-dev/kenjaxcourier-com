@@ -17,7 +17,7 @@ export default function Header() {
       <div className="bg-ink text-white/85">
         <p className="mx-auto flex w-full max-w-6xl items-center gap-2.5 px-5 py-2 text-sm sm:px-8">
           <OpenStatus />
-          <a href={site.phoneHref} className="ml-auto whitespace-nowrap font-semibold tabular-nums text-white hover:underline lg:hidden">
+          <a href={site.phoneHref} className="ml-auto whitespace-nowrap font-semibold tabular-nums text-white hover:underline xl:hidden">
             {site.phone}
           </a>
         </p>
@@ -35,7 +35,7 @@ export default function Header() {
         </Link>
 
         <nav aria-label="Main" className="hidden lg:block">
-          <ul className="flex items-center gap-7 text-[0.95rem] font-medium">
+          <ul className="flex items-center gap-6 whitespace-nowrap text-[0.95rem] font-medium xl:gap-7">
             {nav.map((item) => {
               const active = pathname === item.href;
               return (
@@ -58,14 +58,14 @@ export default function Header() {
         <div className="hidden items-center gap-4 lg:flex">
           <a
             href={site.phoneHref}
-            className="flex items-center gap-2 font-semibold tabular-nums hover:text-signal"
+            className="hidden items-center gap-2 whitespace-nowrap font-semibold tabular-nums hover:text-signal xl:flex"
           >
             <Phone className="size-4" aria-hidden />
             {site.phone}
           </a>
           <Link
             href="/quote"
-            className="inline-flex h-11 items-center rounded-md bg-signal px-4 font-semibold text-white hover:bg-signal-dark"
+            className="inline-flex h-11 items-center whitespace-nowrap rounded-md bg-signal px-4 font-semibold text-white hover:bg-signal-dark"
           >
             Inquire about a quote
           </Link>
