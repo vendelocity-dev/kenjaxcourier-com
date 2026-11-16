@@ -25,7 +25,7 @@ export default function Header() {
       <div className="mx-auto flex h-18 w-full max-w-6xl items-center justify-between gap-6 px-5 sm:px-8">
         <Link href="/" className="shrink-0" aria-label="Kenjax Courier home">
           <Image
-            src="/kenjax-logo.svg"
+            src="/kenjax-logo-ink.svg"
             alt="Kenjax Courier"
             width={381}
             height={105}
