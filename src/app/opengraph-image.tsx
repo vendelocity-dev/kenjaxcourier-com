@@ -30,7 +30,7 @@ export default async function Image() {
           fontFamily: "Source Serif 4",
         }}
       >
-        <img src={`data:image/png;base64,${logo}`} width={312} height={103} alt="" />
+        <img src={`data:image/png;base64,${logo}`} width={340} height={94} alt="" />
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div style={{ fontSize: 76, lineHeight: 1.05, maxWidth: 980 }}>
             Same-day medical courier for Los Angeles pharmacies, labs and clinics.

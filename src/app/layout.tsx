@@ -31,8 +31,8 @@ const jsonLd = {
   url: site.url,
   telephone: "+1-866-285-9477",
   email: site.email,
-  image: `${site.url}/kenjax-logo-dark.png`,
-  logo: `${site.url}/kenjax-logo-dark.png`,
+  image: `${site.url}/kenjax-logo.png`,
+  logo: `${site.url}/kenjax-logo.png`,
   address: {
     "@type": "PostalAddress",
     streetAddress: site.address.street,

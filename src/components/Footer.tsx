@@ -11,10 +11,10 @@ export default function Footer() {
       <div className="mx-auto grid w-full max-w-6xl gap-10 px-5 py-14 sm:px-8 md:grid-cols-[1.4fr_1fr_1fr]">
         <div>
           <Image
-            src="/kenjax-logo-white.png"
+            src="/kenjax-logo-white.svg"
             alt="Kenjax Courier"
-            width={390}
-            height={129}
+            width={381}
+            height={105}
             className="h-12 w-auto"
           />
           <p className="mt-5 max-w-sm">
