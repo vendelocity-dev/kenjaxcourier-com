@@ -11,6 +11,7 @@ export const metadata: Metadata = {
 };
 
 const facts = [
+  { label: "In business since", value: "2013" },
   { label: "Headquarters", value: "Sherman Oaks, CA" },
   { label: "Hours", value: "Mon–Fri, 9am–6pm" },
   { label: "Weekends", value: "Hours vary" },
@@ -29,8 +30,8 @@ export default function About() {
         <Container className="grid gap-14 lg:grid-cols-[1.4fr_1fr]">
           <div className="prose-measure space-y-5 text-lg">
             <p>
-              Kenjax Courier runs same-day medical deliveries from our base in
-              Sherman Oaks. Healthcare is all we do: prescriptions for
+              Since 2013, Kenjax Courier has run same-day medical deliveries from
+              our base in Sherman Oaks. Healthcare is all we do: prescriptions for
               pharmacies, specimens and results for labs, imaging and records
               for medical offices, and supplies and equipment for clinics and
               care facilities.
@@ -38,13 +39,16 @@ export default function About() {
             <p>
               We keep the service simple. You call or send a request, we tell you
               when it will be picked up and when it will arrive, and we hold to
-              it. Dispatch is open Monday to Friday, 9am to 6pm, and weekend
-              availability varies, so call ahead for Saturday and Sunday runs.
+              it. Dispatch takes orders Monday to Friday, 9am to 6pm, and our
+              drivers deliver after hours when a run needs it. Orders placed after
+              6pm go out the next business day. Weekend availability varies, so
+              call ahead for Saturday and Sunday runs.
             </p>
             <p>
-              Our goal is for pharmacies, labs and clinics to treat us like part
-              of their own staff: the courier they don&apos;t have to think
-              about.
+              Many of our clients have worked with us for years under ongoing
+              service contracts. Our goal is for every pharmacy, lab and clinic we
+              serve to treat us like part of their own staff: the courier they
+              don&apos;t have to think about.
             </p>
           </div>
           <dl className="h-fit divide-y divide-line rounded-lg bg-white ring-1 ring-line">

@@ -90,7 +90,7 @@ export default function Home() {
               </ButtonA>
             </div>
             <p className="mt-8 text-sm text-steel">
-              Serving Los Angeles, Orange and Ventura counties from Sherman Oaks.
+              Serving Los Angeles, Orange and Ventura counties from Sherman Oaks since 2013.
             </p>
           </div>
           <ArrivalPlanner />
@@ -141,9 +141,15 @@ export default function Home() {
       {/* Who we serve */}
       <section className="py-24 sm:py-28">
         <Container className="grid gap-10 lg:grid-cols-[1fr_1.5fr]">
-          <h2 className="font-display text-4xl font-medium leading-[1.08] sm:text-[2.9rem]">
-            Built for the offices that keep healthcare running
-          </h2>
+          <div>
+            <h2 className="font-display text-4xl font-medium leading-[1.08] sm:text-[2.9rem]">
+              Built for the offices that keep healthcare running
+            </h2>
+            <p className="prose-measure mt-5 text-lg text-steel">
+              Many of the pharmacies, labs and clinics we serve have worked with
+              us for years under ongoing service contracts.
+            </p>
+          </div>
           <ul className="grid sm:grid-cols-2 sm:gap-x-12">
             {clients.map((c) => (
               <li key={c} className="border-b border-line py-4 text-lg">

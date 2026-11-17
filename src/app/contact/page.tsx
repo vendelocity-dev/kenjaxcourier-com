@@ -59,7 +59,7 @@ export default function Contact() {
                 <p className="text-lg">
                   {site.hours.weekdays}
                   <br />
-                  <span className="text-steel">{site.hours.weekend}. Call ahead to check.</span>
+                  <span className="text-steel">Orders placed after 6pm go out the next business day. {site.hours.weekend}; call ahead to check.</span>
                 </p>
               </div>
             </li>

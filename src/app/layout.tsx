@@ -41,6 +41,7 @@ const jsonLd = {
     postalCode: site.address.postal,
     addressCountry: "US",
   },
+  foundingDate: "2013",
   areaServed: site.counties.map((name) => ({
     "@type": "AdministrativeArea",
     name: `${name}, California`,

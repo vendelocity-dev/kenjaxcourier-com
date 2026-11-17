@@ -6,7 +6,6 @@ import { site } from "@/lib/site";
 // Axis runs 9am (opening) to 8pm, so late Regular windows still fit.
 const AXIS_START = 9;
 const AXIS_END = 20;
-const CLOSE = 18;
 const SPAN = AXIS_END - AXIS_START;
 
 function fmt(h: number) {
@@ -76,7 +75,7 @@ export default function ArrivalPlanner() {
     <div className="rounded-lg bg-ink p-6 text-white shadow-[0_30px_60px_-30px_rgba(14,47,58,0.55)] ring-1 ring-ink sm:p-8">
       <div className="mb-6 flex items-center justify-between gap-4 border-b border-white/15 pb-4 text-sm text-white/65">
         <span>Same-day delivery estimate</span>
-        <span className="whitespace-nowrap">{site.hours.weekdaysShort}</span>
+        <span className="whitespace-nowrap">Orders {site.hours.weekdaysShort}</span>
       </div>
       <label htmlFor={id} className="block">
         <span className="font-display text-[1.7rem] font-medium leading-tight">
@@ -109,10 +108,6 @@ export default function ArrivalPlanner() {
               <span className="text-sm tabular-nums text-white/70">{r.result}</span>
             </div>
             <div className="relative mt-2.5 h-2 rounded-full bg-white/10" aria-hidden>
-              <div
-                className="absolute inset-y-0 right-0 rounded-r-full bg-[repeating-linear-gradient(135deg,rgba(255,255,255,0.12)_0_3px,transparent_3px_6px)]"
-                style={{ left: pct(CLOSE) }}
-              />
               {r.available && (
                 <>
                   <div
@@ -164,14 +159,10 @@ export default function ArrivalPlanner() {
           <span className="h-2.5 w-4 rounded-full bg-signal" aria-hidden />
           Delivery window
         </span>
-        <span className="flex items-center gap-2">
-          <span className="h-2.5 w-4 rounded-full bg-[repeating-linear-gradient(135deg,rgba(255,255,255,0.4)_0_2px,transparent_2px_4px)]" aria-hidden />
-          After 6pm
-        </span>
       </div>
       <p className="mt-3 text-sm text-white/65">
-        Ready after 3pm and it isn&apos;t urgent? Schedule it for the next
-        business day. {site.hours.weekend}.
+        Drivers deliver after hours when a run needs it. Orders placed after
+        6pm go out the next business day.
       </p>
     </div>
   );

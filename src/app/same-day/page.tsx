@@ -71,12 +71,13 @@ export default function SameDay() {
         <Container className="grid gap-12 lg:grid-cols-2">
           <div>
             <h2 className="font-display text-4xl font-medium leading-[1.06]">
-              Scheduled and next-day runs
+              Next-day and recurring runs
             </h2>
             <p className="prose-measure mt-5 text-steel">
-              Book a pickup for the next business day, or set up a recurring
-              route for daily pharmacy deliveries and lab pickups. Dispatch
-              confirms the pickup time with you when you book.
+              Orders placed after 6pm go out the next business day. For daily
+              pharmacy deliveries and lab pickups, we can set up a recurring
+              route under a service contract. Drivers deliver after hours when a
+              run needs it.
             </p>
           </div>
           <div>
