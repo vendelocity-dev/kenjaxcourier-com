@@ -5,7 +5,7 @@
 //
 // Settings (Cloudflare dashboard → Pages project → Settings → Variables and Secrets):
 //   RESEND_API_KEY        (secret, required)  Resend API key
-//   QUOTE_TO_EMAIL        (optional)          staff inbox; defaults to STAFF_INBOX below
+//   QUOTE_TO_EMAIL        (optional)          staff inbox; defaults to information@kenjaxinc.com
 //   QUOTE_FROM_EMAIL      (optional)          defaults to "Kenjax Courier <quotes@kenjaxcourier.com>"
 //   QUOTE_CONFIRMATIONS   (optional)          "0" turns off the customer confirmation email
 //   QUOTE_DRY_RUN         (local testing)     "1" logs the emails instead of sending them
@@ -14,9 +14,9 @@ import { validateQuote } from "../../src/lib/quote";
 import { customerEmail, staffEmail } from "../../src/lib/emails";
 import { site } from "../../src/lib/site";
 
-// TESTING: staff emails (and customer replies) go to admin@kenjaxcourier.com until the
-// emails are approved. After approval, change this to site.email (information@kenjaxinc.com).
-const STAFF_INBOX = "admin@kenjaxcourier.com";
+// Staff emails, and replies to customer confirmations, go to the public contact address
+// (information@kenjaxinc.com). Set QUOTE_TO_EMAIL in Cloudflare to send them elsewhere.
+const STAFF_INBOX = site.email;
 
 type Env = {
   RESEND_API_KEY?: string;
