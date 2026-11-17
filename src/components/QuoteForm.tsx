@@ -178,7 +178,8 @@ export default function QuoteForm() {
         </div>
         <p className="mt-4 text-lg text-steel">
           Dispatch will call you at <strong className="whitespace-nowrap text-ink">{values.phone}</strong> to
-          confirm {values.mode === "quote" ? "your quote" : "the pickup time and price"}.
+          confirm {values.mode === "quote" ? "your quote" : "the pickup time and price"}. We also
+          emailed a copy of your request to <strong className="text-ink">{values.email}</strong>.
           {values.mode === "now" && (
             <>
               {" "}If it can&apos;t wait for a callback, call{" "}

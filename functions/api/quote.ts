@@ -1,23 +1,34 @@
-// Cloudflare Pages Function: handles POST /api/quote from the request form
-// and emails it to Kenjax dispatch through Resend's HTTPS API.
+// Cloudflare Pages Function: handles POST /api/quote from the request form.
+// Sends two emails through Resend's HTTPS API:
+//   1. the request to Kenjax staff (reply-to: the customer)
+//   2. a confirmation to the customer (reply-to: Kenjax)
 //
-// Settings (Cloudflare dashboard → your Pages project → Settings → Variables and Secrets):
-//   RESEND_API_KEY    (secret, required)  Resend API key
-//   QUOTE_TO_EMAIL    (optional)          defaults to the site email (information@kenjaxinc.com)
-//   QUOTE_FROM_EMAIL  (optional)          defaults to "Kenjax Website <quotes@kenjaxcourier.com>"
-//   QUOTE_DRY_RUN     (local testing)     "1" logs the email instead of sending it
+// Settings (Cloudflare dashboard → Pages project → Settings → Variables and Secrets):
+//   RESEND_API_KEY        (secret, required)  Resend API key
+//   QUOTE_TO_EMAIL        (optional)          staff inbox; defaults to STAFF_INBOX below
+//   QUOTE_FROM_EMAIL      (optional)          defaults to "Kenjax Courier <quotes@kenjaxcourier.com>"
+//   QUOTE_CONFIRMATIONS   (optional)          "0" turns off the customer confirmation email
+//   QUOTE_DRY_RUN         (local testing)     "1" logs the emails instead of sending them
 
-import { modes, services, speeds, validateQuote, type QuoteInput } from "../../src/lib/quote";
+import { validateQuote } from "../../src/lib/quote";
+import { customerEmail, staffEmail } from "../../src/lib/emails";
 import { site } from "../../src/lib/site";
+
+// TESTING: staff emails (and customer replies) go to admin@kenjaxcourier.com until the
+// emails are approved. After approval, change this to site.email (information@kenjaxinc.com).
+const STAFF_INBOX = "admin@kenjaxcourier.com";
 
 type Env = {
   RESEND_API_KEY?: string;
   QUOTE_TO_EMAIL?: string;
   QUOTE_FROM_EMAIL?: string;
+  QUOTE_CONFIRMATIONS?: string;
   QUOTE_DRY_RUN?: string;
 };
 
 type Context = { request: Request; env: Env };
+
+type Mail = { from: string; to: string[]; reply_to: string; subject: string; html: string; text: string };
 
 const json = (data: unknown, status = 200) =>
   new Response(JSON.stringify(data), {
@@ -25,33 +36,21 @@ const json = (data: unknown, status = 200) =>
     headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
   });
 
-const esc = (s: string) =>
-  s.replace(/[&<>"']/g, (c) =>
-    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!,
-  );
-
-function rows(q: QuoteInput): [string, string][] {
-  const r: [string, string][] = [
-    ["Request type", modes[q.mode]],
-    ["Service", services[q.service].label],
-    ["Item", q.item],
-  ];
-  if (q.speed) r.push(["Speed", speeds[q.speed]]);
-  r.push(["Pickup", q.pickup]);
-  if (q.dropoff) r.push(["Deliver to", q.dropoff]);
-  if (q.date) r.push(["Date", `${q.date}${q.time ? ` at ${q.time}` : ""}`]);
-  if (q.details) r.push(["Details", q.details]);
-  r.push(["Name", q.name]);
-  if (q.company) r.push(["Company", q.company]);
-  r.push(["Phone", q.phone], ["Email", q.email]);
-  return r;
-}
-
 const sendFailed = () =>
   json(
     { error: `We couldn't send your request online. Call ${site.phone} and dispatch will take it.` },
     502,
   );
+
+async function send(apiKey: string, mail: Mail) {
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+    body: JSON.stringify(mail),
+  });
+  if (!res.ok) console.error("[quote] Resend error", res.status, await res.text());
+  return res.ok;
+}
 
 export async function onRequestPost({ request, env }: Context): Promise<Response> {
   let body: Record<string, unknown>;
@@ -68,21 +67,17 @@ export async function onRequestPost({ request, env }: Context): Promise<Response
   // Honeypot: bots fill hidden fields. Pretend success, send nothing.
   if (q.website) return json({ ok: true });
 
-  const list = rows(q);
-  const subject = `${q.mode === "now" ? "PICKUP NOW: " : ""}Medical delivery request from ${q.name}${q.company ? ` (${q.company})` : ""}`;
-  const text = list.map(([k, v]) => `${k}: ${v}`).join("\n");
-  const html = `<table cellpadding="6" style="font-family:Arial,sans-serif;font-size:14px;border-collapse:collapse">${list
-    .map(
-      ([k, v]) =>
-        `<tr><td style="color:#56657c;vertical-align:top;white-space:nowrap">${esc(k)}</td><td style="white-space:pre-wrap">${esc(v)}</td></tr>`,
-    )
-    .join("")}</table>`;
-
-  const to = env.QUOTE_TO_EMAIL || site.email;
-  const from = env.QUOTE_FROM_EMAIL || "Kenjax Website <quotes@kenjaxcourier.com>";
+  const from = env.QUOTE_FROM_EMAIL || "Kenjax Courier <quotes@kenjaxcourier.com>";
+  const staff = staffEmail(q);
+  const customer = customerEmail(q);
+  const staffInbox = env.QUOTE_TO_EMAIL || STAFF_INBOX;
+  const staffMail: Mail = { from, to: [staffInbox], reply_to: q.email, ...staff };
+  const customerMail: Mail = { from, to: [q.email], reply_to: staffInbox, ...customer };
+  const confirm = env.QUOTE_CONFIRMATIONS !== "0";
 
   if (env.QUOTE_DRY_RUN === "1") {
-    console.log(`[quote] DRY RUN to ${to} from ${from}\n${subject}\n${text}`);
+    console.log(`[quote] DRY RUN staff → ${staffMail.to[0]}: ${staffMail.subject}\n${staff.text}`);
+    if (confirm) console.log(`[quote] DRY RUN customer → ${q.email}: ${customerMail.subject}\n${customer.text}`);
     return json({ ok: true, dryRun: true });
   }
 
@@ -91,16 +86,11 @@ export async function onRequestPost({ request, env }: Context): Promise<Response
     return sendFailed();
   }
 
-  const res = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ from, to: [to], reply_to: q.email, subject, text, html }),
-  });
+  // The staff email is the one that matters: if it fails, tell the visitor to call.
+  if (!(await send(env.RESEND_API_KEY, staffMail))) return sendFailed();
 
-  if (!res.ok) {
-    console.error("[quote] Resend error", res.status, await res.text());
-    return sendFailed();
-  }
+  // The confirmation is a courtesy: a failure is logged but doesn't fail the request.
+  if (confirm) await send(env.RESEND_API_KEY, customerMail);
 
   return json({ ok: true });
 }
