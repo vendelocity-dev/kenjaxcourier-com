@@ -81,8 +81,15 @@ const telHref = (phone: string) => `tel:${phone.replace(/[^\d+]/g, "")}`;
 /** Email to Kenjax staff. Reply-to is the customer. */
 export function staffEmail(q: QuoteInput) {
   const urgent = q.mode === "now";
+  const rush = q.speed === "rush";
   const tag = urgent ? "PICKUP NOW" : q.mode === "schedule" ? "Scheduled pickup" : "Quote request";
-  const subject = `${urgent ? "PICKUP NOW: " : ""}${q.item} – ${q.name}${q.company ? ` (${q.company})` : ""}`;
+  const flags = [rush && "RUSH", urgent && "PICKUP NOW"].filter(Boolean).join(", ");
+  const subject = `${flags ? `${flags}: ` : ""}${q.item} – ${q.name}${q.company ? ` (${q.company})` : ""}`;
+  const pill = (label: string, bg: string, fg: string) =>
+    `<span style="display:inline-block;margin:0 6px 6px 0;padding:4px 10px;border-radius:999px;background:${bg};color:${fg};font:600 13px ${FONT}">${label}</span>`;
+  const pills =
+    (rush ? pill("RUSH · pickup within 45 min", RED, "#FFFFFF") : "") +
+    pill(tag, urgent ? INK : MINT, urgent ? "#FFFFFF" : INK);
 
   const customer: [string, string][] = [
     ["Name", esc(q.name)],
@@ -92,9 +99,9 @@ export function staffEmail(q: QuoteInput) {
   ];
 
   const body = `
-<p style="margin:0 0 14px"><span style="display:inline-block;padding:4px 10px;border-radius:999px;background:${urgent ? RED : MINT};color:${urgent ? "#FFFFFF" : INK};font:600 13px ${FONT}">${tag}</span></p>
+<p style="margin:0 0 8px">${pills}</p>
 ${h1(`New ${services[q.service].label} request`)}
-${p(`Call the customer to confirm the pickup time and price.${urgent ? " They asked for a pickup now." : ""}`, `color:${SLATE}`)}
+${p(`Call the customer to confirm the pickup time and price.${rush ? " This is a Rush: pickup is promised within 45 minutes of booking." : urgent ? " They asked for a pickup now." : ""}`, `color:${SLATE}`)}
 <div style="margin:20px 0 24px">${button(telHref(q.phone), `Call ${esc(q.name.split(" ")[0])}`)}${button(`mailto:${esc(q.email)}`, "Reply by email", INK)}</div>
 <h2 style="margin:0 0 8px;font:600 16px ${FONT};color:${INK}">Delivery</h2>
 ${table(details(q).map(([k, v]) => [k, esc(v)]))}
@@ -102,7 +109,7 @@ ${table(details(q).map(([k, v]) => [k, esc(v)]))}
 ${table(customer)}`;
 
   const text = [
-    tag,
+    [rush && "RUSH (pickup within 45 min)", tag].filter(Boolean).join(" | "),
     "",
     ...details(q).map(([k, v]) => `${k}: ${v}`),
     "",
