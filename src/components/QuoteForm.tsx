@@ -21,6 +21,8 @@ const stepTitles = ["What and when", "Pickup and delivery", "Your contact detail
 
 const inputCls =
   "mt-1.5 block w-full rounded-md border-0 bg-white px-3.5 py-2.5 text-ink ring-1 ring-inset ring-line placeholder:text-steel/70 focus:ring-2 focus:ring-ink focus:outline-none aria-[invalid=true]:ring-signal";
+// Native select arrows sit flush against the right edge; use our own chevron with room around it.
+const selectCls = `${inputCls} form-select`;
 
 function Field({
   label,
@@ -270,7 +272,7 @@ export default function QuoteForm() {
 
             <div className="grid gap-6 sm:grid-cols-2">
               <Field label="What are you sending?" name="item" error={errors.item}>
-                <select {...fieldProps("item")} onChange={(e) => set("item", e.target.value)} className={inputCls}>
+                <select {...fieldProps("item")} onChange={(e) => set("item", e.target.value)} className={selectCls}>
                   <option value="">Choose one</option>
                   {items.map((i) => (
                     <option key={i} value={i}>
@@ -281,7 +283,7 @@ export default function QuoteForm() {
               </Field>
 
                 <Field label="Delivery speed" name="speed" error={errors.speed}>
-                  <select {...fieldProps("speed")} onChange={(e) => set("speed", e.target.value)} className={inputCls}>
+                  <select {...fieldProps("speed")} onChange={(e) => set("speed", e.target.value)} className={selectCls}>
                     {Object.entries(speeds).map(([k, label]) => (
                       <option key={k} value={k}>
                         {label}
